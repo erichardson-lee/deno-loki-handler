@@ -1,25 +1,53 @@
-# Deno-Loki
+# Deno-Loki-Handler
 
-a simple to use [Loki](https://grafana.com/oss/loki/) logger for deno
+A simple to use [Loki](https://grafana.com/oss/loki/) handler for deno std log
 
 Please feel free to use the code in this project for your own projects this is
 more a example than anything useful
 
 ```ts
-import { LokiLogger } from "https://deno.land/x/loki/mod.ts";
-let logger = new LokiLogger(
-  "http://localhost:3100",
-  1,
-  {
-    host: "localhost",
-    job: "Deno!",
+import * as log from "https://deno.land/std@0.163.0/log/mod.ts";
+import { LokiHandler } from "./mod.ts";
+
+log.setup({
+  handlers: {
+    localLokiHandler: new LokiHandler("DEBUG", {
+      url: "http://localhost:3100",
+      enableArgNaming: true,
+    }),
   },
-  "TEXT",
+  loggers: {
+    main: {
+      handlers: ["localLokiHandler"],
+      level: "DEBUG",
+    },
+  },
+});
+
+const logger = log.getLogger("main");
+
+logger.info("Example Message");
+logger.info("Example Message with Object", { foo: "bar" });
+logger.info("Example Message with Named Object", ["ARGNAMES", "test"], {
+  foo: "bar",
+});
+logger.info(
+  "Example Message with Named Object, and unnamed object",
+  ["ARGNAMES", "test"],
+  {
+    foo: "bar",
+  },
+  { bar: "baz" }
 );
-logger.info("Some info", { data: "Some more info" });
-logger.warm("Some info", { data: "Some more info" });
-logger.debug("Some info", { data: "Some more info" });
-logger.error("Some info", { data: "Some more info" });
 ```
 
-![img](images/NQz4MDp.png)
+## Arg Naming
+
+If passing multiple argmuments into a log request, and argNaming is enabled on
+the logger, an Array starting with "ARGNAMES" can be passed into the first arg
+on the log function call, which will define the names used for the rest of the
+arguments on the log line on prometheus
+
+(see example)
+
+![img](images/example.png)
