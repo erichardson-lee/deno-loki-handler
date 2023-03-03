@@ -1,10 +1,12 @@
 import {
   BaseHandler,
   HandlerOptions,
-} from "https://deno.land/std@0.163.0/log/handlers.ts";
-import { LevelName } from "https://deno.land/std@0.163.0/log/levels.ts";
-import { LogRecord } from "https://deno.land/std@0.163.0/log/logger.ts";
-import { getLogger } from "https://deno.land/std@0.163.0/log/mod.ts";
+} from "https://deno.land/std@0.178.0/log/handlers.ts";
+import {
+  getLogger,
+  LevelName,
+  LogRecord,
+} from "https://deno.land/std@0.178.0/log/mod.ts";
 
 const Logger = () => getLogger("loki-handler");
 
